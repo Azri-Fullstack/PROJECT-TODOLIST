@@ -1,0 +1,53 @@
+<?php
+    include "service/database.php";
+    session_start();
+
+    $register_message = " ";
+     if(isset($_SESSION["is_login"])) {
+        header("location: dashboard.php");
+    }
+
+    if(isset($_POST["register"])) {
+    $username = $_POST["username"];
+    $password = $_POST["password"];
+
+        // cek apakah nama ada di database
+        $cek_sql = "SELECT * FROM user Where USERNAME = '$username'";
+        $cek_result = $db->query($cek_sql);
+
+        if($cek_result->num_rows > 0){
+            //user sudah digunakan
+            $register_message = "username '$username' sudah digunakan, silahkan gunakan nama yang lain";
+        }else {
+            //user tersedia, lanjut
+         $sql = "INSERT INTO user (USERNAME, PASSWORD) VALUES
+        ('$username', '$password')";
+
+    if($db->query($sql)) {
+    $register_message = "daftar akun Berhasil, Silahkan Login";
+    }else{
+        $register_message = "daftar akun gagal, Silahkan coba lagi";
+        }
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <?php include "belajar/header.html"?>
+    <h3>Daftar Akun </h3>
+    <i><?= $register_message ?></i>
+    <form action="register.php" method="POST">
+        <input type ="text" placeholder="username" name="username"/>
+        <input type ="password" placeholder="password" name="password"/>
+        <button type ="submit" name="register">daftar Sekarang</button>
+    </form>
+    <?php include "belajar/footer.html"?>
+</body>
+</html>
